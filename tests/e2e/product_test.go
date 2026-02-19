@@ -77,8 +77,12 @@ func getOutboxEvents(t *testing.T, client *spanner.Client, aggregateID string) [
 		}
 		require.NoError(t, err)
 		var e m_outbox.Row
-		err = row.Columns(&e.EventID, &e.EventType, &e.AggregateID, &e.Payload, &e.Status, &e.CreatedAt, &e.ProcessedAt)
+		var processedAt spanner.NullTime
+		err = row.Columns(&e.EventID, &e.EventType, &e.AggregateID, &e.Payload, &e.Status, &e.CreatedAt, &processedAt)
 		require.NoError(t, err)
+		if processedAt.Valid {
+			e.ProcessedAt = processedAt.Time
+		}
 		rows = append(rows, e)
 	}
 	return rows

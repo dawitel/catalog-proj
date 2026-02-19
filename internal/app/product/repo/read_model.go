@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 	"math/big"
-	"time"
 
 	"cloud.google.com/go/spanner"
 	"google.golang.org/api/iterator"
@@ -88,8 +87,7 @@ func spannerRowToProductRow(row *spanner.Row) (*contracts.ProductRow, error) {
 	var discountPercent *big.Rat
 	var discountStart, discountEnd spanner.NullTime
 	var version int64
-	var createdAt, updatedAt time.Time
-	var archivedAt spanner.NullTime
+	var createdAt, updatedAt, archivedAt spanner.NullTime
 	if err := row.Columns(&id, &name, &desc, &category, &baseNum, &baseDen,
 		&discountPercent, &discountStart, &discountEnd, &status, &version, &createdAt, &updatedAt, &archivedAt); err != nil {
 		return nil, err
@@ -108,8 +106,12 @@ func spannerRowToProductRow(row *spanner.Row) (*contracts.ProductRow, error) {
 		BasePriceDenominator: baseDen,
 		DiscountPercent:      discountPercent,
 		Status:               status,
-		CreatedAt:            createdAt,
-		UpdatedAt:            updatedAt,
+	}
+	if createdAt.Valid {
+		pr.CreatedAt = createdAt.Time
+	}
+	if updatedAt.Valid {
+		pr.UpdatedAt = updatedAt.Time
 	}
 	if discountStart.Valid {
 		pr.DiscountStartDate = discountStart.Time

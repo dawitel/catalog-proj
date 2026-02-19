@@ -132,8 +132,7 @@ func rowToDomainProduct(row *spanner.Row) (*domain.Product, error) {
 	var discountPercent *big.Rat
 	var discountStart, discountEnd spanner.NullTime
 	var version int64
-	var createdAt, updatedAt time.Time
-	var archivedAt spanner.NullTime
+	var createdAt, updatedAt, archivedAt spanner.NullTime
 	if err := row.Columns(&id, &name, &desc, &category, &baseNum, &baseDen,
 		&discountPercent, &discountStart, &discountEnd, &status, &version, &createdAt, &updatedAt, &archivedAt); err != nil {
 		return nil, err
@@ -150,10 +149,16 @@ func rowToDomainProduct(row *spanner.Row) (*domain.Product, error) {
 			discount = domain.NewDiscount(num.Int64(), discountStart.Time, discountEnd.Time)
 		}
 	}
-	var archivedAtTime time.Time
+	var createdAtTime, updatedAtTime, archivedAtTime time.Time
+	if createdAt.Valid {
+		createdAtTime = createdAt.Time
+	}
+	if updatedAt.Valid {
+		updatedAtTime = updatedAt.Time
+	}
 	if archivedAt.Valid {
 		archivedAtTime = archivedAt.Time
 	}
 	return domain.RestoreProduct(id, name, description, category, basePrice, discount,
-		domain.ProductStatus(status), version, createdAt, updatedAt, archivedAtTime), nil
+		domain.ProductStatus(status), version, createdAtTime, updatedAtTime, archivedAtTime), nil
 }
