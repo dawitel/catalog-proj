@@ -25,9 +25,13 @@ func (q *Query) Execute(ctx context.Context, productID string) (*DTO, error) {
 	}
 	basePrice := domain.NewMoney(row.BasePriceNumerator, row.BasePriceDenominator)
 	var discount *domain.Discount
-	if row.DiscountPercent != nil && row.DiscountPercent.Denom().IsInt64() && row.DiscountPercent.Denom().Int64() == 100 && row.DiscountPercent.Num().IsInt64() {
-		if pct := row.DiscountPercent.Num().Int64(); pct >= 0 && pct <= 100 {
-			discount = domain.NewDiscount(pct, row.DiscountStartDate, row.DiscountEndDate)
+	if row.DiscountPercent != nil {
+		n, d := row.DiscountPercent.Num(), row.DiscountPercent.Denom()
+		if n.IsInt64() && d.IsInt64() && d.Int64() != 0 {
+			pct := n.Int64() * 100 / d.Int64()
+			if pct >= 0 && pct <= 100 {
+				discount = domain.NewDiscount(pct, row.DiscountStartDate, row.DiscountEndDate)
+			}
 		}
 	}
 	now := q.clock.Now()

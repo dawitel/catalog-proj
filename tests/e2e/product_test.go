@@ -64,7 +64,7 @@ func getOutboxEvents(t *testing.T, client *spanner.Client, aggregateID string) [
 	t.Helper()
 	ctx := context.Background()
 	stmt := spanner.Statement{
-		SQL:    "SELECT event_id, event_type, aggregate_id, payload, status, created_at, processed_at FROM outbox_events WHERE aggregate_id = @aid ORDER BY created_at",
+		SQL:    "SELECT event_id, event_type, aggregate_id, TO_JSON_STRING(payload) AS payload, status, created_at, processed_at FROM outbox_events WHERE aggregate_id = @aid ORDER BY created_at",
 		Params: map[string]interface{}{"aid": aggregateID},
 	}
 	iter := client.Single().Query(ctx, stmt)
@@ -158,8 +158,8 @@ func TestDiscountApplicationFlow(t *testing.T) {
 
 	product, err := getQuery.Execute(ctx, productID)
 	require.NoError(t, err)
-	assert.Equal(t, int64(8000), product.EffectivePriceNumerator)
-	assert.Equal(t, int64(100), product.EffectivePriceDenominator)
+	effectiveVal := float64(product.EffectivePriceNumerator) / float64(product.EffectivePriceDenominator)
+	assert.Equal(t, 80.0, effectiveVal)
 }
 
 func TestActivateDeactivateFlow(t *testing.T) {
