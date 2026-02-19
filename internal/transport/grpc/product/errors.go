@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/product-catalog-service/internal/commitplan"
 	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
 )
 
@@ -21,6 +22,8 @@ func ToGRPC(err error) error {
 		return status.Error(codes.FailedPrecondition, err.Error())
 	case errors.Is(err, domain.ErrProductArchived):
 		return status.Error(codes.FailedPrecondition, err.Error())
+	case errors.Is(err, commitplan.ErrConcurrentModification):
+		return status.Error(codes.FailedPrecondition, "concurrent modification; please retry")
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}

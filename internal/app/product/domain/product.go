@@ -22,6 +22,7 @@ type Product struct {
 	basePrice   *Money
 	discount    *Discount
 	status      ProductStatus
+	version     int64
 	createdAt   time.Time
 	updatedAt   time.Time
 	archivedAt  time.Time
@@ -47,6 +48,7 @@ func NewProduct(id, name, description, category string, basePrice *Money, now ti
 		category:    category,
 		basePrice:   basePrice,
 		status:      ProductStatusActive,
+		version:     1,
 		createdAt:   now,
 		updatedAt:   now,
 		changes:     changes,
@@ -63,7 +65,7 @@ func NewProduct(id, name, description, category string, basePrice *Money, now ti
 	return p
 }
 
-func RestoreProduct(id, name, description, category string, basePrice *Money, discount *Discount, status ProductStatus, createdAt, updatedAt, archivedAt time.Time) *Product {
+func RestoreProduct(id, name, description, category string, basePrice *Money, discount *Discount, status ProductStatus, version int64, createdAt, updatedAt, archivedAt time.Time) *Product {
 	if basePrice == nil {
 		return nil
 	}
@@ -75,6 +77,7 @@ func RestoreProduct(id, name, description, category string, basePrice *Money, di
 		basePrice:   basePrice,
 		discount:    discount,
 		status:      status,
+		version:     version,
 		createdAt:   createdAt,
 		updatedAt:   updatedAt,
 		archivedAt:  archivedAt,
@@ -151,6 +154,13 @@ func (p *Product) ArchivedAt() time.Time {
 		return time.Time{}
 	}
 	return p.archivedAt
+}
+
+func (p *Product) Version() int64 {
+	if p == nil {
+		return 0
+	}
+	return p.version
 }
 
 func (p *Product) Changes() *ChangeTracker {

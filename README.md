@@ -81,7 +81,7 @@ make run
 
 - **Archive:** Archive (soft delete) is implemented in the domain and in an archive_product usecase. It is exposed via gRPC as ArchiveProduct so clients can soft-delete products; ListProducts returns only active products.
 
-- **Concurrency:** Optimistic locking is not implemented. Concurrent updates follow last-write-wins; no version field or conflict detection. E2E tests do not include a dedicated concurrent-update scenario.
+- **Concurrency:** Optimistic locking is implemented via a `version` column on `products` and conditional DML in the same transaction (update is applied only when `WHERE product_id = ? AND version = ?` matches one row; otherwise the transaction fails with a conflict error). E2E tests include a concurrent-update scenario that verifies one of two concurrent updates fails with the expected error.
 
 ## Architecture (high level)
 

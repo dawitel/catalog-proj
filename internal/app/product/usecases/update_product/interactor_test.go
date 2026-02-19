@@ -24,8 +24,8 @@ func TestUpdateProduct_Success(t *testing.T) {
 
 	productRepo := contractsmocks.NewMockProductRepo(t)
 	productRepo.EXPECT().Get(mock.Anything, "id1").Return(product, nil)
-	productRepo.EXPECT().UpdateMut(mock.Anything).RunAndReturn(func(p *domain.Product) *spanner.Mutation {
-		return spanner.InsertMap("products", map[string]interface{}{"id": p.ID()})
+	productRepo.EXPECT().UpdateConditional(mock.Anything).RunAndReturn(func(p *domain.Product) *commitplan.ConditionalUpdate {
+		return &commitplan.ConditionalUpdate{Stmt: "UPDATE products SET name = @name WHERE product_id = @product_id AND version = @version", Params: map[string]interface{}{}}
 	})
 
 	outboxRepo := contractsmocks.NewMockOutboxRepo(t)
@@ -47,7 +47,8 @@ func TestUpdateProduct_Success(t *testing.T) {
 	err := it.Execute(context.Background(), Request{ProductID: "id1", Name: "new", Description: "newd", Category: "newc"})
 	require.NoError(t, err)
 	require.NotNil(t, capturedPlan)
-	assert.GreaterOrEqual(t, len(capturedPlan.Mutations()), 2)
+	assert.GreaterOrEqual(t, len(capturedPlan.ConditionalUpdates()), 1)
+	assert.GreaterOrEqual(t, len(capturedPlan.Mutations()), 1)
 	assert.Equal(t, "new", product.Name())
 }
 

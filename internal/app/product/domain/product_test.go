@@ -18,6 +18,7 @@ func TestNewProduct(t *testing.T) {
 	assert.Equal(t, "desc", p.Description())
 	assert.Equal(t, "cat", p.Category())
 	assert.Equal(t, ProductStatusActive, p.Status())
+	assert.Equal(t, int64(1), p.Version())
 	assert.True(t, p.CreatedAt().Equal(now))
 	assert.True(t, p.UpdatedAt().Equal(now))
 	assert.Nil(t, p.Discount())
@@ -31,14 +32,15 @@ func TestRestoreProduct(t *testing.T) {
 	base := NewMoney(100, 1)
 	created := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
 	updated := time.Date(2025, 1, 2, 0, 0, 0, 0, time.UTC)
-	p := RestoreProduct("id2", "n", "d", "c", base, nil, ProductStatusInactive, created, updated, time.Time{})
+	p := RestoreProduct("id2", "n", "d", "c", base, nil, ProductStatusInactive, 1, created, updated, time.Time{})
 	require.NotNil(t, p)
 	assert.Equal(t, "id2", p.ID())
 	assert.Equal(t, ProductStatusInactive, p.Status())
+	assert.Equal(t, int64(1), p.Version())
 	assert.True(t, p.UpdatedAt().Equal(updated))
 	assert.Nil(t, p.DomainEvents())
 
-	assert.Nil(t, RestoreProduct("id", "n", "d", "c", nil, nil, ProductStatusActive, created, updated, time.Time{}))
+	assert.Nil(t, RestoreProduct("id", "n", "d", "c", nil, nil, ProductStatusActive, 1, created, updated, time.Time{}))
 }
 
 func TestProduct_UpdateDetails(t *testing.T) {
@@ -53,7 +55,7 @@ func TestProduct_UpdateDetails(t *testing.T) {
 	assert.Equal(t, "newc", p.Category())
 	assert.True(t, p.Changes().Dirty(FieldName))
 
-	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, now, now, now)
+	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, 1, now, now, now)
 	err = p2.UpdateDetails("x", "y", "z", now)
 	assert.ErrorIs(t, err, ErrProductArchived)
 }
@@ -61,7 +63,7 @@ func TestProduct_UpdateDetails(t *testing.T) {
 func TestProduct_Activate(t *testing.T) {
 	now := time.Now()
 	base := NewMoney(100, 1)
-	p := RestoreProduct("id", "n", "d", "c", base, nil, ProductStatusInactive, now, now, time.Time{})
+	p := RestoreProduct("id", "n", "d", "c", base, nil, ProductStatusInactive, 1, now, now, time.Time{})
 	err := p.Activate(now.Add(time.Hour))
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusActive, p.Status())
@@ -70,7 +72,7 @@ func TestProduct_Activate(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusActive, p.Status())
 
-	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, now, now, now)
+	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, 1, now, now, now)
 	err = p2.Activate(now)
 	assert.ErrorIs(t, err, ErrProductArchived)
 }
@@ -87,7 +89,7 @@ func TestProduct_Deactivate(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, ProductStatusInactive, p.Status())
 
-	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, now, now, now)
+	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, 1, now, now, now)
 	err = p2.Deactivate(now)
 	assert.ErrorIs(t, err, ErrProductArchived)
 }
@@ -118,7 +120,7 @@ func TestProduct_ApplyDiscount(t *testing.T) {
 	assert.NotNil(t, p.Discount())
 	assert.Equal(t, int64(25), p.Discount().Percentage())
 
-	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusInactive, now, now, time.Time{})
+	p2 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusInactive, 1, now, now, time.Time{})
 	err = p2.ApplyDiscount(disc, now)
 	assert.ErrorIs(t, err, ErrProductNotActive)
 
@@ -144,7 +146,7 @@ func TestProduct_RemoveDiscount(t *testing.T) {
 	err = p2.RemoveDiscount(now)
 	require.NoError(t, err)
 
-	p3 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, now, now, now)
+	p3 := RestoreProduct("a", "n", "d", "c", base, nil, ProductStatusArchived, 1, now, now, now)
 	err = p3.RemoveDiscount(now)
 	assert.ErrorIs(t, err, ErrProductArchived)
 }
@@ -153,6 +155,7 @@ func TestProduct_NilReceiver(t *testing.T) {
 	var p *Product
 	assert.Empty(t, p.ID())
 	assert.Empty(t, p.Name())
+	assert.Equal(t, int64(0), p.Version())
 	assert.Nil(t, p.BasePrice())
 	assert.Nil(t, p.Changes())
 	assert.Nil(t, p.DomainEvents())

@@ -5,6 +5,8 @@ package contracts
 import (
 	context "context"
 
+	commitplan "github.com/dawitel/product-catalog-service/internal/commitplan"
+
 	domain "github.com/dawitel/product-catalog-service/internal/app/product/domain"
 
 	mock "github.com/stretchr/testify/mock"
@@ -132,50 +134,50 @@ func (_c *MockProductRepo_InsertMut_Call) RunAndReturn(run func(*domain.Product)
 	return _c
 }
 
-// UpdateMut provides a mock function with given fields: p
-func (_m *MockProductRepo) UpdateMut(p *domain.Product) *spanner.Mutation {
+// UpdateConditional provides a mock function with given fields: p
+func (_m *MockProductRepo) UpdateConditional(p *domain.Product) *commitplan.ConditionalUpdate {
 	ret := _m.Called(p)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateMut")
+		panic("no return value specified for UpdateConditional")
 	}
 
-	var r0 *spanner.Mutation
-	if rf, ok := ret.Get(0).(func(*domain.Product) *spanner.Mutation); ok {
+	var r0 *commitplan.ConditionalUpdate
+	if rf, ok := ret.Get(0).(func(*domain.Product) *commitplan.ConditionalUpdate); ok {
 		r0 = rf(p)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*spanner.Mutation)
+			r0 = ret.Get(0).(*commitplan.ConditionalUpdate)
 		}
 	}
 
 	return r0
 }
 
-// MockProductRepo_UpdateMut_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateMut'
-type MockProductRepo_UpdateMut_Call struct {
+// MockProductRepo_UpdateConditional_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateConditional'
+type MockProductRepo_UpdateConditional_Call struct {
 	*mock.Call
 }
 
-// UpdateMut is a helper method to define mock.On call
+// UpdateConditional is a helper method to define mock.On call
 //   - p *domain.Product
-func (_e *MockProductRepo_Expecter) UpdateMut(p interface{}) *MockProductRepo_UpdateMut_Call {
-	return &MockProductRepo_UpdateMut_Call{Call: _e.mock.On("UpdateMut", p)}
+func (_e *MockProductRepo_Expecter) UpdateConditional(p interface{}) *MockProductRepo_UpdateConditional_Call {
+	return &MockProductRepo_UpdateConditional_Call{Call: _e.mock.On("UpdateConditional", p)}
 }
 
-func (_c *MockProductRepo_UpdateMut_Call) Run(run func(p *domain.Product)) *MockProductRepo_UpdateMut_Call {
+func (_c *MockProductRepo_UpdateConditional_Call) Run(run func(p *domain.Product)) *MockProductRepo_UpdateConditional_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(*domain.Product))
 	})
 	return _c
 }
 
-func (_c *MockProductRepo_UpdateMut_Call) Return(_a0 *spanner.Mutation) *MockProductRepo_UpdateMut_Call {
+func (_c *MockProductRepo_UpdateConditional_Call) Return(_a0 *commitplan.ConditionalUpdate) *MockProductRepo_UpdateConditional_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockProductRepo_UpdateMut_Call) RunAndReturn(run func(*domain.Product) *spanner.Mutation) *MockProductRepo_UpdateMut_Call {
+func (_c *MockProductRepo_UpdateConditional_Call) RunAndReturn(run func(*domain.Product) *commitplan.ConditionalUpdate) *MockProductRepo_UpdateConditional_Call {
 	_c.Call.Return(run)
 	return _c
 }

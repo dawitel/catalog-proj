@@ -2,7 +2,9 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/spanner"
@@ -10,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/product-catalog-service/internal/commitplan"
 	"github.com/dawitel/product-catalog-service/internal/models/m_product"
 )
 
@@ -29,52 +32,64 @@ func (r *ProductRepo) InsertMut(p *domain.Product) *spanner.Mutation {
 	return m_product.InsertMut(row)
 }
 
-// UpdateMut builds an update mutation only from dirty fields in the change tracker.
-// Returns nil when there are no changes (avoids no-op writes).
-func (r *ProductRepo) UpdateMut(p *domain.Product) *spanner.Mutation {
+func (r *ProductRepo) UpdateConditional(p *domain.Product) *commitplan.ConditionalUpdate {
 	if p == nil || p.Changes() == nil {
 		return nil
 	}
-	updates := make(map[string]interface{})
+	var setParts []string
+	params := map[string]interface{}{
+		"product_id": p.ID(),
+		"version":    p.Version(),
+	}
 	if p.Changes().Dirty(domain.FieldName) {
-		updates[m_product.Name] = p.Name()
+		setParts = append(setParts, "name = @name")
+		params["name"] = p.Name()
 	}
 	if p.Changes().Dirty(domain.FieldDescription) {
-		updates[m_product.Description] = p.Description()
+		setParts = append(setParts, "description = @description")
+		params["description"] = p.Description()
 	}
 	if p.Changes().Dirty(domain.FieldCategory) {
-		updates[m_product.Category] = p.Category()
+		setParts = append(setParts, "category = @category")
+		params["category"] = p.Category()
 	}
 	if p.Changes().Dirty(domain.FieldBasePrice) {
 		if bp := p.BasePrice(); bp != nil {
-			updates[m_product.BasePriceNumerator] = bp.Numerator()
-			updates[m_product.BasePriceDenominator] = bp.Denominator()
+			setParts = append(setParts, "base_price_numerator = @base_price_numerator", "base_price_denominator = @base_price_denominator")
+			params["base_price_numerator"] = bp.Numerator()
+			params["base_price_denominator"] = bp.Denominator()
 		}
 	}
 	if p.Changes().Dirty(domain.FieldDiscount) {
+		setParts = append(setParts, "discount_percent = @discount_percent", "discount_start_date = @discount_start_date", "discount_end_date = @discount_end_date")
 		if d := p.Discount(); d != nil {
-			updates[m_product.DiscountPercent] = big.NewRat(d.Percentage(), 100)
-			updates[m_product.DiscountStartDate] = d.StartDate()
-			updates[m_product.DiscountEndDate] = d.EndDate()
+			params["discount_percent"] = big.NewRat(d.Percentage(), 100)
+			params["discount_start_date"] = d.StartDate()
+			params["discount_end_date"] = d.EndDate()
 		} else {
-			updates[m_product.DiscountPercent] = nil
-			updates[m_product.DiscountStartDate] = time.Time{}
-			updates[m_product.DiscountEndDate] = time.Time{}
+			params["discount_percent"] = nil
+			params["discount_start_date"] = time.Time{}
+			params["discount_end_date"] = time.Time{}
 		}
 	}
 	if p.Changes().Dirty(domain.FieldStatus) {
-		updates[m_product.Status] = string(p.Status())
+		setParts = append(setParts, "status = @status")
+		params["status"] = string(p.Status())
 	}
 	if p.Changes().Dirty(domain.FieldUpdatedAt) {
-		updates[m_product.UpdatedAt] = p.UpdatedAt()
+		setParts = append(setParts, "updated_at = @updated_at")
+		params["updated_at"] = p.UpdatedAt()
 	}
 	if p.Changes().Dirty(domain.FieldArchivedAt) {
-		updates[m_product.ArchivedAt] = p.ArchivedAt()
+		setParts = append(setParts, "archived_at = @archived_at")
+		params["archived_at"] = p.ArchivedAt()
 	}
-	if len(updates) == 0 {
+	if len(setParts) == 0 {
 		return nil
 	}
-	return m_product.UpdateMut(p.ID(), updates)
+	setParts = append(setParts, "version = version + 1")
+	stmt := fmt.Sprintf("UPDATE products SET %s WHERE product_id = @product_id AND version = @version", strings.Join(setParts, ", "))
+	return &commitplan.ConditionalUpdate{Stmt: stmt, Params: params}
 }
 
 func (r *ProductRepo) Get(ctx context.Context, id string) (*domain.Product, error) {
@@ -97,6 +112,7 @@ func domainProductToRow(p *domain.Product) *m_product.Row {
 		BasePriceNumerator:   p.BasePrice().Numerator(),
 		BasePriceDenominator: p.BasePrice().Denominator(),
 		Status:               string(p.Status()),
+		Version:              1,
 		CreatedAt:            p.CreatedAt(),
 		UpdatedAt:            p.UpdatedAt(),
 		ArchivedAt:           p.ArchivedAt(),
@@ -115,10 +131,11 @@ func rowToDomainProduct(row *spanner.Row) (*domain.Product, error) {
 	var baseNum, baseDen int64
 	var discountPercent *big.Rat
 	var discountStart, discountEnd spanner.NullTime
+	var version int64
 	var createdAt, updatedAt time.Time
 	var archivedAt spanner.NullTime
 	if err := row.Columns(&id, &name, &desc, &category, &baseNum, &baseDen,
-		&discountPercent, &discountStart, &discountEnd, &status, &createdAt, &updatedAt, &archivedAt); err != nil {
+		&discountPercent, &discountStart, &discountEnd, &status, &version, &createdAt, &updatedAt, &archivedAt); err != nil {
 		return nil, err
 	}
 	description := ""
@@ -138,5 +155,5 @@ func rowToDomainProduct(row *spanner.Row) (*domain.Product, error) {
 		archivedAtTime = archivedAt.Time
 	}
 	return domain.RestoreProduct(id, name, description, category, basePrice, discount,
-		domain.ProductStatus(status), createdAt, updatedAt, archivedAtTime), nil
+		domain.ProductStatus(status), version, createdAt, updatedAt, archivedAtTime), nil
 }

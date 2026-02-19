@@ -15,8 +15,10 @@ type GlobalConfig struct {
 	SpannerDatabase     string
 	SpannerEmulatorHost string
 	GrpcPort            string
-	// MigrationsPath is the path to the initial schema SQL file (e.g. migrations/001_initial_schema.sql).
+	// MigrationsPath is the path to the initial schema SQL file (legacy single file).
 	MigrationsPath string
+	// MigrationsDir is the directory containing migration SQL files (run in lexicographic order).
+	MigrationsDir string
 }
 
 // DatabasePath returns the Spanner database path: projects/{project}/instances/{instance}/databases/{database}.
@@ -35,6 +37,7 @@ func LoadFromEnv() GlobalConfig {
 		SpannerEmulatorHost: os.Getenv("SPANNER_EMULATOR_HOST"),
 		GrpcPort:            grpcPortFromEnv(),
 		MigrationsPath:      getEnv("MIGRATIONS_PATH", "migrations/001_initial_schema.sql"),
+		MigrationsDir:       getEnv("MIGRATIONS_DIR", "migrations"),
 	}
 }
 

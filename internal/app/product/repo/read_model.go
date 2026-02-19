@@ -37,7 +37,7 @@ func (r *ReadModel) GetProductByID(ctx context.Context, id string) (*contracts.P
 func (r *ReadModel) ListProducts(ctx context.Context, filter contracts.ListFilter, page contracts.ListPage) (*contracts.ListProductsResult, error) {
 	stmt := spanner.Statement{
 		SQL: `SELECT product_id, name, description, category, base_price_numerator, base_price_denominator,
-			discount_percent, discount_start_date, discount_end_date, status, created_at, updated_at, archived_at
+			discount_percent, discount_start_date, discount_end_date, status, version, created_at, updated_at, archived_at
 			FROM products WHERE status = @status AND (@category IS NULL OR category = @category)
 			AND (@token = '' OR product_id > @token) ORDER BY product_id LIMIT @limit`,
 		Params: map[string]interface{}{
@@ -80,12 +80,14 @@ func spannerRowToProductRow(row *spanner.Row) (*contracts.ProductRow, error) {
 	var baseNum, baseDen int64
 	var discountPercent *big.Rat
 	var discountStart, discountEnd spanner.NullTime
+	var version int64
 	var createdAt, updatedAt time.Time
 	var archivedAt spanner.NullTime
 	if err := row.Columns(&id, &name, &desc, &category, &baseNum, &baseDen,
-		&discountPercent, &discountStart, &discountEnd, &status, &createdAt, &updatedAt, &archivedAt); err != nil {
+		&discountPercent, &discountStart, &discountEnd, &status, &version, &createdAt, &updatedAt, &archivedAt); err != nil {
 		return nil, err
 	}
+	_ = version
 	description := ""
 	if desc.Valid {
 		description = desc.StringVal

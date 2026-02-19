@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
 	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/product-catalog-service/internal/commitplan"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
 	"github.com/dawitel/product-catalog-service/internal/app/product/repo"
@@ -289,4 +291,53 @@ func TestArchiveFlow(t *testing.T) {
 	for _, item := range result.Items {
 		assert.NotEqual(t, productID, item.ID, "archived product should not be in list")
 	}
+}
+
+func TestConcurrentUpdates(t *testing.T) {
+	ctx, _, createUC, updateUC, _, _, _, _, _, getQuery, _ := setup(t)
+	productID, err := createUC.Execute(ctx, create_product.Request{
+		Name:                 "Original",
+		Description:          "",
+		Category:             "c1",
+		BasePriceNumerator:   1000,
+		BasePriceDenominator: 100,
+	})
+	require.NoError(t, err)
+
+	var wg sync.WaitGroup
+	var err1, err2 error
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		err1 = updateUC.Execute(ctx, update_product.Request{
+			ProductID: productID, Name: "Update A", Description: "", Category: "c1",
+		})
+	}()
+	go func() {
+		defer wg.Done()
+		err2 = updateUC.Execute(ctx, update_product.Request{
+			ProductID: productID, Name: "Update B", Description: "", Category: "c1",
+		})
+	}()
+	wg.Wait()
+
+	successCount := 0
+	if err1 == nil {
+		successCount++
+	}
+	if err2 == nil {
+		successCount++
+	}
+	require.Equal(t, 1, successCount, "exactly one update should succeed")
+	if err1 != nil {
+		assert.ErrorIs(t, err1, commitplan.ErrConcurrentModification)
+	}
+	if err2 != nil {
+		assert.ErrorIs(t, err2, commitplan.ErrConcurrentModification)
+	}
+
+	product, err := getQuery.Execute(ctx, productID)
+	require.NoError(t, err)
+	require.NotNil(t, product)
+	assert.Contains(t, []string{"Update A", "Update B"}, product.Name)
 }

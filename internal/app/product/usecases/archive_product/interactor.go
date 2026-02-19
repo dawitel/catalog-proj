@@ -35,8 +35,8 @@ func (it *Interactor) Execute(ctx context.Context, req Request) error {
 		return err
 	}
 	plan := commitplan.NewPlan()
-	if mut := it.productRepo.UpdateMut(product); mut != nil {
-		plan.Add(mut)
+	if cu := it.productRepo.UpdateConditional(product); cu != nil {
+		plan.AddConditionalUpdate(cu.Stmt, cu.Params)
 	}
 	for _, ev := range product.DomainEvents() {
 		payload, _ := json.Marshal(map[string]interface{}{"product_id": ev.AggregateID(), "occurred_at": ev.OccurredAt()})

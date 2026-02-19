@@ -1,10 +1,10 @@
 .PHONY: docker-up docker-down migrate test run proto generate-mocks
 
 docker-up:
-	@docker-compose up -d
+	@docker compose up -d
 
 docker-down:
-	@docker-compose down
+	@docker compose down
 
 migrate:
 	@SPANNER_EMULATOR_HOST=localhost:9010 go run ./cmd/migrate

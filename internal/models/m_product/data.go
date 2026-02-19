@@ -18,6 +18,7 @@ type Row struct {
 	DiscountStartDate    time.Time
 	DiscountEndDate      time.Time
 	Status               string
+	Version              int64
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
 	ArchivedAt           time.Time
@@ -28,12 +29,12 @@ func InsertMut(r *Row) *spanner.Mutation {
 		ProductID, Name, Description, Category,
 		BasePriceNumerator, BasePriceDenominator,
 		DiscountPercent, DiscountStartDate, DiscountEndDate,
-		Status, CreatedAt, UpdatedAt, ArchivedAt,
+		Status, Version, CreatedAt, UpdatedAt, ArchivedAt,
 	}, []interface{}{
 		r.ProductID, r.Name, r.Description, r.Category,
 		r.BasePriceNumerator, r.BasePriceDenominator,
 		r.DiscountPercent, r.DiscountStartDate, r.DiscountEndDate,
-		r.Status, r.CreatedAt, r.UpdatedAt, r.ArchivedAt,
+		r.Status, r.Version, r.CreatedAt, r.UpdatedAt, r.ArchivedAt,
 	})
 }
 
