@@ -73,7 +73,7 @@ func TestQuery_Execute_SuccessWithDiscount(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, dto)
 	assert.Equal(t, "id1", dto.ID)
-	assert.Equal(t, int64(100), dto.EffectivePriceNumerator)
+	assert.Equal(t, int64(80), dto.EffectivePriceNumerator)
 	assert.Equal(t, int64(1), dto.EffectivePriceDenominator)
 }
 
