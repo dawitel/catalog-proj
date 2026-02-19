@@ -1,0 +1,3 @@
+syntax = "proto3";
+package product.v1;
+option go_package = "github.com/dawitel/product-catalog-service/proto/product/v1;productv1";
