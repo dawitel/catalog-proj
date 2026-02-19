@@ -1,3 +1,5 @@
+// Package domain holds the product aggregate, value objects (Money, Discount),
+// domain events, and errors. It has no dependencies on context, database, or proto.
 package domain
 
 import "time"
@@ -10,6 +12,8 @@ const (
 	ProductStatusArchived ProductStatus = "archived"
 )
 
+// Product is the aggregate root for product lifecycle and pricing.
+// State changes go through business methods and are tracked for persistence; domain events are collected for the outbox.
 type Product struct {
 	id          string
 	name        string
@@ -163,6 +167,7 @@ func (p *Product) DomainEvents() []DomainEvent {
 	return p.events
 }
 
+// UpdateDetails updates name, description, and category. Fails if product is archived.
 func (p *Product) UpdateDetails(name, description, category string, now time.Time) error {
 	if p == nil {
 		return nil
@@ -188,6 +193,7 @@ func (p *Product) UpdateDetails(name, description, category string, now time.Tim
 	return nil
 }
 
+// Activate sets status to active. No-op if already active; fails if archived.
 func (p *Product) Activate(now time.Time) error {
 	if p == nil {
 		return nil
@@ -206,6 +212,7 @@ func (p *Product) Activate(now time.Time) error {
 	return nil
 }
 
+// Deactivate sets status to inactive. No-op if already inactive; fails if archived.
 func (p *Product) Deactivate(now time.Time) error {
 	if p == nil {
 		return nil
@@ -224,6 +231,7 @@ func (p *Product) Deactivate(now time.Time) error {
 	return nil
 }
 
+// Archive soft-deletes the product (status archived, archivedAt set). No-op if already archived.
 func (p *Product) Archive(now time.Time) error {
 	if p == nil {
 		return nil
@@ -241,6 +249,7 @@ func (p *Product) Archive(now time.Time) error {
 	return nil
 }
 
+// ApplyDiscount sets the product's discount (one active discount per product). Only allowed when product is active; discount must be valid at now.
 func (p *Product) ApplyDiscount(discount *Discount, now time.Time) error {
 	if p == nil {
 		return nil
@@ -265,6 +274,7 @@ func (p *Product) ApplyDiscount(discount *Discount, now time.Time) error {
 	return nil
 }
 
+// RemoveDiscount clears the current discount. Fails if product is archived; no-op if there is no discount.
 func (p *Product) RemoveDiscount(now time.Time) error {
 	if p == nil {
 		return nil

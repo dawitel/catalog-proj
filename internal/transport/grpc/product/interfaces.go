@@ -6,6 +6,7 @@ import (
 	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
+	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
 	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
 	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
 	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
@@ -28,6 +29,10 @@ type ActivateRunner interface {
 
 type DeactivateRunner interface {
 	Execute(ctx context.Context, req deactivate_product.Request) error
+}
+
+type ArchiveRunner interface {
+	Execute(ctx context.Context, req archive_product.Request) error
 }
 
 type ApplyDiscountRunner interface {

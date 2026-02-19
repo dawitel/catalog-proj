@@ -7,6 +7,7 @@ service ProductService {
   rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductReply);
   rpc ActivateProduct(ActivateProductRequest) returns (ActivateProductReply);
   rpc DeactivateProduct(DeactivateProductRequest) returns (DeactivateProductReply);
+  rpc ArchiveProduct(ArchiveProductRequest) returns (ArchiveProductReply);
   rpc ApplyDiscount(ApplyDiscountRequest) returns (ApplyDiscountReply);
   rpc RemoveDiscount(RemoveDiscountRequest) returns (RemoveDiscountReply);
   rpc GetProduct(GetProductRequest) returns (GetProductReply);
@@ -45,6 +46,12 @@ message DeactivateProductRequest {
 }
 
 message DeactivateProductReply {}
+
+message ArchiveProductRequest {
+  string product_id = 1;
+}
+
+message ArchiveProductReply {}
 
 message ApplyDiscountRequest {
   string product_id = 1;

@@ -29,6 +29,8 @@ func (r *ProductRepo) InsertMut(p *domain.Product) *spanner.Mutation {
 	return m_product.InsertMut(row)
 }
 
+// UpdateMut builds an update mutation only from dirty fields in the change tracker.
+// Returns nil when there are no changes (avoids no-op writes).
 func (r *ProductRepo) UpdateMut(p *domain.Product) *spanner.Mutation {
 	if p == nil || p.Changes() == nil {
 		return nil
@@ -68,6 +70,9 @@ func (r *ProductRepo) UpdateMut(p *domain.Product) *spanner.Mutation {
 	}
 	if p.Changes().Dirty(domain.FieldArchivedAt) {
 		updates[m_product.ArchivedAt] = p.ArchivedAt()
+	}
+	if len(updates) == 0 {
+		return nil
 	}
 	return m_product.UpdateMut(p.ID(), updates)
 }

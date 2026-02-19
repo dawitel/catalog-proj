@@ -33,6 +33,8 @@ func New(productRepo contracts.ProductRepo, outboxRepo contracts.OutboxRepo, app
 }
 
 func (it *Interactor) Execute(ctx context.Context, req Request) (string, error) {
+	// Golden Mutation: (1) create aggregate, (2) domain validation in constructor,
+	// (3) build plan, (4) repo mutations (insert), (5) outbox events, (6) apply plan.
 	id := req.ID
 	if id == "" {
 		id = uuid.New().String()
@@ -48,10 +50,14 @@ func (it *Interactor) Execute(ctx context.Context, req Request) (string, error) 
 	}
 
 	plan := commitplan.NewPlan()
-	plan.Add(it.productRepo.InsertMut(product))
+	if mut := it.productRepo.InsertMut(product); mut != nil {
+		plan.Add(mut)
+	}
 	for _, ev := range product.DomainEvents() {
 		payload, _ := json.Marshal(eventPayload(ev))
-		plan.Add(it.outboxRepo.InsertMut(uuid.New().String(), ev.EventType(), ev.AggregateID(), string(payload), "pending", ev.OccurredAt()))
+		if mut := it.outboxRepo.InsertMut(uuid.New().String(), ev.EventType(), ev.AggregateID(), string(payload), "pending", ev.OccurredAt()); mut != nil {
+			plan.Add(mut)
+		}
 	}
 	
 	if err := it.applier.Apply(ctx, plan); err != nil {

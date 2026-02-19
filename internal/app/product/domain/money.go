@@ -2,6 +2,7 @@ package domain
 
 import "math/big"
 
+// Money is a value object for precise decimal amounts using *big.Rat (numerator/denominator).
 type Money struct {
 	rat *big.Rat
 }

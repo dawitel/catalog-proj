@@ -39,10 +39,14 @@ func (it *Interactor) Execute(ctx context.Context, req Request) error {
 		return err
 	}
 	plan := commitplan.NewPlan()
-	plan.Add(it.productRepo.UpdateMut(product))
+	if mut := it.productRepo.UpdateMut(product); mut != nil {
+		plan.Add(mut)
+	}
 	for _, ev := range product.DomainEvents() {
 		payload, _ := json.Marshal(eventPayload(ev))
-		plan.Add(it.outboxRepo.InsertMut(uuid.New().String(), ev.EventType(), ev.AggregateID(), string(payload), "pending", ev.OccurredAt()))
+		if mut := it.outboxRepo.InsertMut(uuid.New().String(), ev.EventType(), ev.AggregateID(), string(payload), "pending", ev.OccurredAt()); mut != nil {
+			plan.Add(mut)
+		}
 	}
 	return it.applier.Apply(ctx, plan)
 }

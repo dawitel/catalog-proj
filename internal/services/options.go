@@ -9,6 +9,7 @@ import (
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
 	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
+	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
 	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
 	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
 	deactivate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/deactivate_product"
@@ -45,11 +46,12 @@ func NewProductHandler(ctx context.Context, cfg Config) (*product.Handler, *span
 	updateUC := update_product.New(productRepo, outboxRepo, comm, clk)
 	activateUC := activate_product.New(productRepo, outboxRepo, comm, clk)
 	deactivateUC := deactivate_product.New(productRepo, outboxRepo, comm, clk)
+	archiveUC := archive_product.New(productRepo, outboxRepo, comm, clk)
 	applyDiscUC := apply_discount.New(productRepo, outboxRepo, comm, clk)
 	removeDiscUC := remove_discount.New(productRepo, outboxRepo, comm, clk)
 	getQuery := get_product.New(readModel, clk)
 	listQuery := list_products.New(readModel, clk)
 
-	handler := product.NewHandler(createUC, updateUC, activateUC, deactivateUC, applyDiscUC, removeDiscUC, getQuery, listQuery)
+	handler := product.NewHandler(createUC, updateUC, activateUC, deactivateUC, archiveUC, applyDiscUC, removeDiscUC, getQuery, listQuery)
 	return handler, client, nil
 }

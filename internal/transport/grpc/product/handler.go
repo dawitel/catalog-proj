@@ -10,6 +10,7 @@ type Handler struct {
 	Update     UpdateRunner
 	Activate   ActivateRunner
 	Deactivate DeactivateRunner
+	Archive    ArchiveRunner
 	ApplyDisc  ApplyDiscountRunner
 	RemoveDisc RemoveDiscountRunner
 	Get        GetProductRunner
@@ -21,6 +22,7 @@ func NewHandler(
 	update UpdateRunner,
 	activate ActivateRunner,
 	deactivate DeactivateRunner,
+	archive ArchiveRunner,
 	applyDiscount ApplyDiscountRunner,
 	removeDiscount RemoveDiscountRunner,
 	getProduct GetProductRunner,
@@ -31,6 +33,7 @@ func NewHandler(
 		Update:     update,
 		Activate:   activate,
 		Deactivate: deactivate,
+		Archive:    archive,
 		ApplyDisc:  applyDiscount,
 		RemoveDisc: removeDiscount,
 		Get:        getProduct,

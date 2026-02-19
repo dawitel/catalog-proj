@@ -14,6 +14,7 @@ import (
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
 	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
+	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
 	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
 	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
 	deactivate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/deactivate_product"
@@ -27,7 +28,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func setup(t *testing.T) (context.Context, *spanner.Client, *create_product.Interactor, *update_product.Interactor, *activate_product.Interactor, *deactivate_product.Interactor, *apply_discount.Interactor, *remove_discount.Interactor, *get_product.Query, *list_products.Query) {
+func setup(t *testing.T) (context.Context, *spanner.Client, *create_product.Interactor, *update_product.Interactor, *activate_product.Interactor, *deactivate_product.Interactor, *archive_product.Interactor, *apply_discount.Interactor, *remove_discount.Interactor, *get_product.Query, *list_products.Query) {
 	t.Helper()
 	if os.Getenv("SPANNER_EMULATOR_HOST") == "" {
 		t.Skip("SPANNER_EMULATOR_HOST not set, skipping e2e")
@@ -51,12 +52,13 @@ func setup(t *testing.T) (context.Context, *spanner.Client, *create_product.Inte
 	updateUC := update_product.New(productRepo, outboxRepo, comm, clk)
 	activateUC := activate_product.New(productRepo, outboxRepo, comm, clk)
 	deactivateUC := deactivate_product.New(productRepo, outboxRepo, comm, clk)
+	archiveUC := archive_product.New(productRepo, outboxRepo, comm, clk)
 	applyDiscUC := apply_discount.New(productRepo, outboxRepo, comm, clk)
 	removeDiscUC := remove_discount.New(productRepo, outboxRepo, comm, clk)
 	getQuery := get_product.New(readModel, clk)
 	listQuery := list_products.New(readModel, clk)
 
-	return ctx, client, createUC, updateUC, activateUC, deactivateUC, applyDiscUC, removeDiscUC, getQuery, listQuery
+	return ctx, client, createUC, updateUC, activateUC, deactivateUC, archiveUC, applyDiscUC, removeDiscUC, getQuery, listQuery
 }
 
 func getEnv(key, def string) string {
@@ -91,7 +93,7 @@ func getOutboxEvents(t *testing.T, client *spanner.Client, aggregateID string) [
 }
 
 func TestProductCreationFlow(t *testing.T) {
-	ctx, client, createUC, _, _, _, _, _, getQuery, _ := setup(t)
+	ctx, client, createUC, _, _, _, _, _, _, getQuery, _ := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "Test Product",
 		Description:          "Desc",
@@ -115,7 +117,7 @@ func TestProductCreationFlow(t *testing.T) {
 }
 
 func TestProductUpdateFlow(t *testing.T) {
-	ctx, _, createUC, updateUC, _, _, _, _, getQuery, _ := setup(t)
+	ctx, _, createUC, updateUC, _, _, _, _, _, getQuery, _ := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "Original",
 		Description:          "D",
@@ -141,7 +143,7 @@ func TestProductUpdateFlow(t *testing.T) {
 }
 
 func TestDiscountApplicationFlow(t *testing.T) {
-	ctx, _, createUC, _, _, _, applyDiscUC, _, getQuery, _ := setup(t)
+	ctx, _, createUC, _, _, _, _, applyDiscUC, _, getQuery, _ := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "With Discount",
 		Description:          "",
@@ -169,7 +171,7 @@ func TestDiscountApplicationFlow(t *testing.T) {
 }
 
 func TestActivateDeactivateFlow(t *testing.T) {
-	ctx, client, createUC, _, activateUC, deactivateUC, _, _, getQuery, listQuery := setup(t)
+	ctx, client, createUC, _, activateUC, deactivateUC, _, _, _, getQuery, listQuery := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "Active Product",
 		Description:          "",
@@ -200,7 +202,7 @@ func TestActivateDeactivateFlow(t *testing.T) {
 }
 
 func TestBusinessRuleValidation(t *testing.T) {
-	ctx, _, createUC, _, _, deactivateUC, applyDiscUC, _, _, _ := setup(t)
+	ctx, _, createUC, _, _, deactivateUC, _, applyDiscUC, _, _, _ := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "Inactive",
 		Description:          "",
@@ -224,7 +226,7 @@ func TestBusinessRuleValidation(t *testing.T) {
 }
 
 func TestOutboxEventCreation(t *testing.T) {
-	ctx, client, createUC, updateUC, activateUC, deactivateUC, applyDiscUC, removeDiscUC, _, _ := setup(t)
+	ctx, client, createUC, updateUC, activateUC, deactivateUC, _, applyDiscUC, removeDiscUC, _, _ := setup(t)
 	productID, err := createUC.Execute(ctx, create_product.Request{
 		Name:                 "Outbox Test",
 		Description:          "",
@@ -256,4 +258,45 @@ func TestOutboxEventCreation(t *testing.T) {
 
 	events = getOutboxEvents(t, client, productID)
 	require.GreaterOrEqual(t, len(events), 5)
+}
+
+func TestArchiveFlow(t *testing.T) {
+	ctx, client, createUC, _, _, _, archiveUC, _, _, getQuery, listQuery := setup(t)
+	productID, err := createUC.Execute(ctx, create_product.Request{
+		Name:                 "To Archive",
+		Description:          "",
+		Category:             "c1",
+		BasePriceNumerator:   1000,
+		BasePriceDenominator: 100,
+	})
+	require.NoError(t, err)
+
+	product, err := getQuery.Execute(ctx, productID)
+	require.NoError(t, err)
+	assert.Equal(t, "active", product.Status)
+
+	err = archiveUC.Execute(ctx, archive_product.Request{ProductID: productID})
+	require.NoError(t, err)
+
+	product, err = getQuery.Execute(ctx, productID)
+	require.NoError(t, err)
+	assert.Equal(t, "archived", product.Status)
+
+	events := getOutboxEvents(t, client, productID)
+	require.GreaterOrEqual(t, len(events), 2)
+	var foundArchived bool
+	for _, e := range events {
+		if e.EventType == "product.archived" {
+			foundArchived = true
+			break
+		}
+	}
+	assert.True(t, foundArchived, "expected product.archived event in outbox")
+
+	// Archived products do not appear in list (active only)
+	result, err := listQuery.Execute(ctx, contracts.ListFilter{}, contracts.ListPage{PageSize: 100, Token: ""})
+	require.NoError(t, err)
+	for _, item := range result.Items {
+		assert.NotEqual(t, productID, item.ID, "archived product should not be in list")
+	}
 }

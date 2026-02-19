@@ -23,6 +23,7 @@ const (
 	ProductService_UpdateProduct_FullMethodName     = "/product.v1.ProductService/UpdateProduct"
 	ProductService_ActivateProduct_FullMethodName   = "/product.v1.ProductService/ActivateProduct"
 	ProductService_DeactivateProduct_FullMethodName = "/product.v1.ProductService/DeactivateProduct"
+	ProductService_ArchiveProduct_FullMethodName    = "/product.v1.ProductService/ArchiveProduct"
 	ProductService_ApplyDiscount_FullMethodName     = "/product.v1.ProductService/ApplyDiscount"
 	ProductService_RemoveDiscount_FullMethodName    = "/product.v1.ProductService/RemoveDiscount"
 	ProductService_GetProduct_FullMethodName        = "/product.v1.ProductService/GetProduct"
@@ -37,6 +38,7 @@ type ProductServiceClient interface {
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductReply, error)
 	ActivateProduct(ctx context.Context, in *ActivateProductRequest, opts ...grpc.CallOption) (*ActivateProductReply, error)
 	DeactivateProduct(ctx context.Context, in *DeactivateProductRequest, opts ...grpc.CallOption) (*DeactivateProductReply, error)
+	ArchiveProduct(ctx context.Context, in *ArchiveProductRequest, opts ...grpc.CallOption) (*ArchiveProductReply, error)
 	ApplyDiscount(ctx context.Context, in *ApplyDiscountRequest, opts ...grpc.CallOption) (*ApplyDiscountReply, error)
 	RemoveDiscount(ctx context.Context, in *RemoveDiscountRequest, opts ...grpc.CallOption) (*RemoveDiscountReply, error)
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductReply, error)
@@ -91,6 +93,16 @@ func (c *productServiceClient) DeactivateProduct(ctx context.Context, in *Deacti
 	return out, nil
 }
 
+func (c *productServiceClient) ArchiveProduct(ctx context.Context, in *ArchiveProductRequest, opts ...grpc.CallOption) (*ArchiveProductReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ArchiveProductReply)
+	err := c.cc.Invoke(ctx, ProductService_ArchiveProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *productServiceClient) ApplyDiscount(ctx context.Context, in *ApplyDiscountRequest, opts ...grpc.CallOption) (*ApplyDiscountReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ApplyDiscountReply)
@@ -139,6 +151,7 @@ type ProductServiceServer interface {
 	UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductReply, error)
 	ActivateProduct(context.Context, *ActivateProductRequest) (*ActivateProductReply, error)
 	DeactivateProduct(context.Context, *DeactivateProductRequest) (*DeactivateProductReply, error)
+	ArchiveProduct(context.Context, *ArchiveProductRequest) (*ArchiveProductReply, error)
 	ApplyDiscount(context.Context, *ApplyDiscountRequest) (*ApplyDiscountReply, error)
 	RemoveDiscount(context.Context, *RemoveDiscountRequest) (*RemoveDiscountReply, error)
 	GetProduct(context.Context, *GetProductRequest) (*GetProductReply, error)
@@ -164,6 +177,9 @@ func (UnimplementedProductServiceServer) ActivateProduct(context.Context, *Activ
 }
 func (UnimplementedProductServiceServer) DeactivateProduct(context.Context, *DeactivateProductRequest) (*DeactivateProductReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeactivateProduct not implemented")
+}
+func (UnimplementedProductServiceServer) ArchiveProduct(context.Context, *ArchiveProductRequest) (*ArchiveProductReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ArchiveProduct not implemented")
 }
 func (UnimplementedProductServiceServer) ApplyDiscount(context.Context, *ApplyDiscountRequest) (*ApplyDiscountReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method ApplyDiscount not implemented")
@@ -270,6 +286,24 @@ func _ProductService_DeactivateProduct_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_ArchiveProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArchiveProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).ArchiveProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_ArchiveProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).ArchiveProduct(ctx, req.(*ArchiveProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProductService_ApplyDiscount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ApplyDiscountRequest)
 	if err := dec(in); err != nil {
@@ -364,6 +398,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeactivateProduct",
 			Handler:    _ProductService_DeactivateProduct_Handler,
+		},
+		{
+			MethodName: "ArchiveProduct",
+			Handler:    _ProductService_ArchiveProduct_Handler,
 		},
 		{
 			MethodName: "ApplyDiscount",
