@@ -7,4 +7,5 @@ var (
 	ErrProductNotActive      = errors.New("product not active")
 	ErrProductArchived       = errors.New("product is archived")
 	ErrInvalidDiscountPeriod = errors.New("invalid discount period")
+	ErrInvalidProduct        = errors.New("invalid product")
 )

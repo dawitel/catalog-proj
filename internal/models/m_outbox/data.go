@@ -18,8 +18,8 @@ type Row struct {
 
 func InsertMut(r *Row) *spanner.Mutation {
 	return spanner.Insert(TableName, []string{
-		EventID, EventType, AggregateID, Payload, Status, CreatedAt, ProcessedAt,
+		EventID, EventType, AggregateID, Payload, Status, CreatedAt,
 	}, []interface{}{
-		r.EventID, r.EventType, r.AggregateID, r.Payload, r.Status, r.CreatedAt, r.ProcessedAt,
+		r.EventID, r.EventType, r.AggregateID, r.Payload, r.Status, r.CreatedAt,
 	})
 }

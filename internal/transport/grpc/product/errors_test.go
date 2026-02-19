@@ -22,6 +22,14 @@ func TestToGRPC_ErrProductNotFound(t *testing.T) {
 	assert.Equal(t, codes.NotFound, st.Code())
 }
 
+func TestToGRPC_ErrInvalidProduct(t *testing.T) {
+	err := ToGRPC(domain.ErrInvalidProduct)
+	assert.NotNil(t, err)
+	st, ok := status.FromError(err)
+	assert.True(t, ok)
+	assert.Equal(t, codes.InvalidArgument, st.Code())
+}
+
 func TestToGRPC_ErrProductNotActive(t *testing.T) {
 	err := ToGRPC(domain.ErrProductNotActive)
 	assert.NotNil(t, err)

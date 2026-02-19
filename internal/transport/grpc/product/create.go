@@ -10,8 +10,8 @@ import (
 )
 
 func (h *Handler) CreateProduct(ctx context.Context, req *productv1.CreateProductRequest) (*productv1.CreateProductReply, error) {
-	if req == nil || req.GetName() == "" || req.GetCategory() == "" || req.GetBasePriceDenominator() == 0 {
-		return nil, status.Error(codes.InvalidArgument, "name, category and base price required")
+	if req == nil || req.GetName() == "" || req.GetCategory() == "" || req.GetBasePriceDenominator() == 0 || req.GetBasePriceNumerator() < 0 {
+		return nil, status.Error(codes.InvalidArgument, "name, category and valid base price required")
 	}
 	appReq := createRequestFromProto(req)
 	productID, err := h.Create.Execute(ctx, appReq)

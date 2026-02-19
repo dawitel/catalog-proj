@@ -18,6 +18,8 @@ func ToGRPC(err error) error {
 	switch {
 	case errors.Is(err, domain.ErrProductNotFound):
 		return status.Error(codes.NotFound, err.Error())
+	case errors.Is(err, domain.ErrInvalidProduct):
+		return status.Error(codes.InvalidArgument, err.Error())
 	case errors.Is(err, domain.ErrProductNotActive), errors.Is(err, domain.ErrInvalidDiscountPeriod):
 		return status.Error(codes.FailedPrecondition, err.Error())
 	case errors.Is(err, domain.ErrProductArchived):

@@ -34,7 +34,14 @@ func (r *ReadModel) GetProductByID(ctx context.Context, id string) (*contracts.P
 	return spannerRowToProductRow(row)
 }
 
+const defaultListPageSize = 20
+
 func (r *ReadModel) ListProducts(ctx context.Context, filter contracts.ListFilter, page contracts.ListPage) (*contracts.ListProductsResult, error) {
+	pageSize := page.PageSize
+	if pageSize <= 0 {
+		pageSize = defaultListPageSize
+	}
+	limit := pageSize + 1
 	stmt := spanner.Statement{
 		SQL: `SELECT product_id, name, description, category, base_price_numerator, base_price_denominator,
 			discount_percent, discount_start_date, discount_end_date, status, version, created_at, updated_at, archived_at
@@ -44,7 +51,7 @@ func (r *ReadModel) ListProducts(ctx context.Context, filter contracts.ListFilte
 			"status":   "active",
 			"category": filter.Category,
 			"token":    page.Token,
-			"limit":    page.PageSize + 1,
+			"limit":    limit,
 		},
 	}
 	iter := r.client.Single().Query(ctx, stmt)
@@ -65,9 +72,9 @@ func (r *ReadModel) ListProducts(ctx context.Context, filter contracts.ListFilte
 		items = append(items, pr)
 	}
 	result := &contracts.ListProductsResult{}
-	if len(items) > page.PageSize {
-		result.NextToken = items[page.PageSize-1].ID
-		result.Items = items[:page.PageSize]
+	if len(items) > pageSize {
+		result.NextToken = items[pageSize-1].ID
+		result.Items = items[:pageSize]
 	} else {
 		result.Items = items
 	}

@@ -180,7 +180,7 @@ func (p *Product) DomainEvents() []DomainEvent {
 // UpdateDetails updates name, description, and category. Fails if product is archived.
 func (p *Product) UpdateDetails(name, description, category string, now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status == ProductStatusArchived {
 		return ErrProductArchived
@@ -206,7 +206,7 @@ func (p *Product) UpdateDetails(name, description, category string, now time.Tim
 // Activate sets status to active. No-op if already active; fails if archived.
 func (p *Product) Activate(now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status == ProductStatusArchived {
 		return ErrProductArchived
@@ -225,7 +225,7 @@ func (p *Product) Activate(now time.Time) error {
 // Deactivate sets status to inactive. No-op if already inactive; fails if archived.
 func (p *Product) Deactivate(now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status == ProductStatusArchived {
 		return ErrProductArchived
@@ -244,7 +244,7 @@ func (p *Product) Deactivate(now time.Time) error {
 // Archive soft-deletes the product (status archived, archivedAt set). No-op if already archived.
 func (p *Product) Archive(now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status == ProductStatusArchived {
 		return nil
@@ -262,7 +262,7 @@ func (p *Product) Archive(now time.Time) error {
 // ApplyDiscount sets the product's discount (one active discount per product). Only allowed when product is active; discount must be valid at now.
 func (p *Product) ApplyDiscount(discount *Discount, now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status != ProductStatusActive {
 		return ErrProductNotActive
@@ -287,7 +287,7 @@ func (p *Product) ApplyDiscount(discount *Discount, now time.Time) error {
 // RemoveDiscount clears the current discount. Fails if product is archived; no-op if there is no discount.
 func (p *Product) RemoveDiscount(now time.Time) error {
 	if p == nil {
-		return nil
+		return ErrInvalidProduct
 	}
 	if p.status == ProductStatusArchived {
 		return ErrProductArchived
