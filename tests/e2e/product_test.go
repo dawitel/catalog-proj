@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
@@ -13,14 +12,15 @@ import (
 	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
 	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
+	"github.com/dawitel/product-catalog-service/internal/app/product/repo"
 	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
-	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
 	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
+	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
 	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
 	deactivate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/deactivate_product"
 	remove_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/remove_discount"
 	update_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/update_product"
-	"github.com/dawitel/product-catalog-service/internal/app/product/repo"
+	"github.com/dawitel/product-catalog-service/internal/pkg/config"
 	"github.com/dawitel/product-catalog-service/internal/models/m_outbox"
 	"github.com/dawitel/product-catalog-service/internal/pkg/clock"
 	"github.com/dawitel/product-catalog-service/internal/pkg/committer"
@@ -30,15 +30,12 @@ import (
 
 func setup(t *testing.T) (context.Context, *spanner.Client, *create_product.Interactor, *update_product.Interactor, *activate_product.Interactor, *deactivate_product.Interactor, *archive_product.Interactor, *apply_discount.Interactor, *remove_discount.Interactor, *get_product.Query, *list_products.Query) {
 	t.Helper()
-	if os.Getenv("SPANNER_EMULATOR_HOST") == "" {
+	cfg := config.LoadFromEnv()
+	if cfg.SpannerEmulatorHost == "" {
 		t.Skip("SPANNER_EMULATOR_HOST not set, skipping e2e")
 	}
 	ctx := context.Background()
-	project := getEnv("SPANNER_PROJECT", "test-project")
-	instance := getEnv("SPANNER_INSTANCE", "test-instance")
-	database := getEnv("SPANNER_DATABASE", "product-catalog")
-	dbPath := "projects/" + project + "/instances/" + instance + "/databases/" + database
-	client, err := spanner.NewClient(ctx, dbPath)
+	client, err := spanner.NewClient(ctx, cfg.DatabasePath())
 	require.NoError(t, err)
 	t.Cleanup(func() { client.Close() })
 
@@ -59,13 +56,6 @@ func setup(t *testing.T) (context.Context, *spanner.Client, *create_product.Inte
 	listQuery := list_products.New(readModel, clk)
 
 	return ctx, client, createUC, updateUC, activateUC, deactivateUC, archiveUC, applyDiscUC, removeDiscUC, getQuery, listQuery
-}
-
-func getEnv(key, def string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return def
 }
 
 func getOutboxEvents(t *testing.T, client *spanner.Client, aggregateID string) []m_outbox.Row {

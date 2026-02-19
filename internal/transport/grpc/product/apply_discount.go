@@ -16,12 +16,12 @@ func (h *Handler) ApplyDiscount(ctx context.Context, req *productv1.ApplyDiscoun
 	}
 	productID, percent, start, end := applyDiscountRequestFromProto(req)
 	if err := h.ApplyDisc.Execute(ctx, apply_discount.Request{
-		ProductID:  productID,
-		Percent:    percent,
-		StartDate:  start,
-		EndDate:    end,
+		ProductID: productID,
+		Percent:   percent,
+		StartDate: start,
+		EndDate:   end,
 	}); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("ApplyDiscount", err)
 	}
 	return &productv1.ApplyDiscountReply{}, nil
 }

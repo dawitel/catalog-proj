@@ -15,7 +15,7 @@ func (h *Handler) UpdateProduct(ctx context.Context, req *productv1.UpdateProduc
 	}
 	appReq := updateRequestFromProto(req)
 	if err := h.Update.Execute(ctx, appReq); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("UpdateProduct", err)
 	}
 	return &productv1.UpdateProductReply{}, nil
 }

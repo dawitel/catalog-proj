@@ -16,7 +16,7 @@ func (h *Handler) CreateProduct(ctx context.Context, req *productv1.CreateProduc
 	appReq := createRequestFromProto(req)
 	productID, err := h.Create.Execute(ctx, appReq)
 	if err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("CreateProduct", err)
 	}
 	return &productv1.CreateProductReply{ProductId: productID}, nil
 }

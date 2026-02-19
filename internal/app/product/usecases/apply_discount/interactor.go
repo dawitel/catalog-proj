@@ -13,10 +13,10 @@ import (
 )
 
 type Request struct {
-	ProductID  string
-	Percent    int64
-	StartDate  time.Time
-	EndDate    time.Time
+	ProductID string
+	Percent   int64
+	StartDate time.Time
+	EndDate   time.Time
 }
 
 type Interactor struct {

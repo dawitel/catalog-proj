@@ -5,6 +5,8 @@ go 1.25.7
 require (
 	cloud.google.com/go/spanner v1.88.0
 	github.com/google/uuid v1.6.0
+	github.com/joho/godotenv v1.5.1
+	github.com/lmittmann/tint v1.0.4
 	github.com/stretchr/testify v1.11.1
 	google.golang.org/api v0.265.0
 	google.golang.org/grpc v1.78.0

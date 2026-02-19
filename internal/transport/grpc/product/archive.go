@@ -15,7 +15,7 @@ func (h *Handler) ArchiveProduct(ctx context.Context, req *productv1.ArchiveProd
 		return nil, status.Error(codes.InvalidArgument, "product_id required")
 	}
 	if err := h.Archive.Execute(ctx, archive_product.Request{ProductID: req.GetProductId()}); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("ArchiveProduct", err)
 	}
 	return &productv1.ArchiveProductReply{}, nil
 }

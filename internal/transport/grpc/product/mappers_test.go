@@ -50,9 +50,9 @@ func TestApplyDiscountRequestFromProto(t *testing.T) {
 	start := time.Unix(1000, 0)
 	end := time.Unix(2000, 0)
 	req := &productv1.ApplyDiscountRequest{
-		ProductId:      "pid",
-		Percent:        25,
-		StartDateUnix:  1000,
+		ProductId:     "pid",
+		Percent:       25,
+		StartDateUnix: 1000,
 		EndDateUnix:   2000,
 	}
 	productID, percent, s, e := applyDiscountRequestFromProto(req)
@@ -68,15 +68,15 @@ func TestGetProductReplyFromDTO_Nil(t *testing.T) {
 
 func TestGetProductReplyFromDTO_NonNil(t *testing.T) {
 	d := &get_product.DTO{
-		ID:                       "id1",
-		Name:                     "n",
-		Description:              "d",
-		Category:                 "c",
-		BasePriceNumerator:       100,
-		BasePriceDenominator:     1,
-		EffectivePriceNumerator:  80,
+		ID:                        "id1",
+		Name:                      "n",
+		Description:               "d",
+		Category:                  "c",
+		BasePriceNumerator:        100,
+		BasePriceDenominator:      1,
+		EffectivePriceNumerator:   80,
 		EffectivePriceDenominator: 1,
-		Status:                   "active",
+		Status:                    "active",
 	}
 	got := getProductReplyFromDTO(d)
 	assert.NotNil(t, got)
@@ -103,14 +103,14 @@ func TestListProductsReplyFromResult_NonNil(t *testing.T) {
 		Items: []list_products.Item{
 			{
 				ID:                        "id1",
-				Name:                     "a",
-				Description:              "ad",
-				Category:                 "ac",
-				BasePriceNumerator:       50,
-				BasePriceDenominator:     1,
-				EffectivePriceNumerator:  40,
+				Name:                      "a",
+				Description:               "ad",
+				Category:                  "ac",
+				BasePriceNumerator:        50,
+				BasePriceDenominator:      1,
+				EffectivePriceNumerator:   40,
 				EffectivePriceDenominator: 1,
-				Status:                   "active",
+				Status:                    "active",
 			},
 		},
 		NextToken: "tok",

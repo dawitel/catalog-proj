@@ -15,7 +15,7 @@ func (h *Handler) RemoveDiscount(ctx context.Context, req *productv1.RemoveDisco
 		return nil, status.Error(codes.InvalidArgument, "product_id required")
 	}
 	if err := h.RemoveDisc.Execute(ctx, remove_discount.Request{ProductID: req.GetProductId()}); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("RemoveDiscount", err)
 	}
 	return &productv1.RemoveDiscountReply{}, nil
 }

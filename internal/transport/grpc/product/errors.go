@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
 )
 
 func ToGRPC(err error) error {
@@ -23,4 +24,11 @@ func ToGRPC(err error) error {
 	default:
 		return status.Error(codes.Internal, err.Error())
 	}
+}
+
+func LogRPCError(method string, err error) error {
+	if err != nil {
+		logger.Warn("RPC error", "method", method, "err", err)
+	}
+	return ToGRPC(err)
 }

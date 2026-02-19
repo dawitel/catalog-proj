@@ -15,7 +15,7 @@ func (h *Handler) GetProduct(ctx context.Context, req *productv1.GetProductReque
 	}
 	dto, err := h.Get.Execute(ctx, req.GetProductId())
 	if err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("GetProduct", err)
 	}
 	return getProductReplyFromDTO(dto), nil
 }

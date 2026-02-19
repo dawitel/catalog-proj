@@ -15,7 +15,7 @@ func (h *Handler) ActivateProduct(ctx context.Context, req *productv1.ActivatePr
 		return nil, status.Error(codes.InvalidArgument, "product_id required")
 	}
 	if err := h.Activate.Execute(ctx, activate_product.Request{ProductID: req.GetProductId()}); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("ActivateProduct", err)
 	}
 	return &productv1.ActivateProductReply{}, nil
 }

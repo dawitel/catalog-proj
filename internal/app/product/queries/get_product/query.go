@@ -36,14 +36,14 @@ func (q *Query) Execute(ctx context.Context, productID string) (*DTO, error) {
 		effective = basePrice
 	}
 	return &DTO{
-		ID:                         row.ID,
-		Name:                       row.Name,
-		Description:                row.Description,
-		Category:                   row.Category,
-		BasePriceNumerator:         row.BasePriceNumerator,
-		BasePriceDenominator:       row.BasePriceDenominator,
-		EffectivePriceNumerator:    effective.Numerator(),
-		EffectivePriceDenominator:  effective.Denominator(),
-		Status:                     row.Status,
+		ID:                        row.ID,
+		Name:                      row.Name,
+		Description:               row.Description,
+		Category:                  row.Category,
+		BasePriceNumerator:        row.BasePriceNumerator,
+		BasePriceDenominator:      row.BasePriceDenominator,
+		EffectivePriceNumerator:   effective.Numerator(),
+		EffectivePriceDenominator: effective.Denominator(),
+		Status:                    row.Status,
 	}, nil
 }

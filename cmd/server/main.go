@@ -2,33 +2,31 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"os"
-	"strconv"
+	"os/signal"
+	"syscall"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/dawitel/product-catalog-service/internal/pkg/config"
+	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
 	"github.com/dawitel/product-catalog-service/internal/services"
 	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
 )
 
 func main() {
-	cfg := services.Config{
-		SpannerProject:  getEnv("SPANNER_PROJECT", "test-project"),
-		SpannerInstance: getEnv("SPANNER_INSTANCE", "test-instance"),
-		SpannerDatabase: getEnv("SPANNER_DATABASE", "product-catalog"),
-	}
-	port := getEnv("GRPC_PORT", "8080")
-	if _, err := strconv.Atoi(port); err != nil {
-		port = "8080"
-	}
+	cfg := config.LoadFromEnv()
 
 	ctx := context.Background()
-	handler, client, err := services.NewProductHandler(ctx, cfg)
+	handler, client, err := services.NewProductHandler(ctx, services.Config{
+		SpannerProject:  cfg.SpannerProject,
+		SpannerInstance: cfg.SpannerInstance,
+		SpannerDatabase: cfg.SpannerDatabase,
+	})
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewProductHandler: %v\n", err)
+		logger.Error("NewProductHandler failed", "err", err)
 		os.Exit(1)
 	}
 	defer client.Close()
@@ -37,22 +35,27 @@ func main() {
 	productv1.RegisterProductServiceServer(srv, handler)
 	reflection.Register(srv)
 
-	lis, err := net.Listen("tcp", ":"+port)
+	lis, err := net.Listen("tcp", ":"+cfg.GrpcPort)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "listen: %v\n", err)
+		logger.Error("listen failed", "err", err)
 		os.Exit(1)
 	}
 	defer lis.Close()
 
-	if err := srv.Serve(lis); err != nil {
-		fmt.Fprintf(os.Stderr, "serve: %v\n", err)
-		os.Exit(1)
-	}
-}
+	go func() {
+		if err := srv.Serve(lis); err != nil && err != grpc.ErrServerStopped {
+			logger.Error("serve failed", "err", err)
+			os.Exit(1)
+		}
+	}()
 
-func getEnv(key, defaultVal string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return defaultVal
+	logger.Info("gRPC server listening", "addr", lis.Addr().String())
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-sigCh
+	logger.Info("shutdown signal received", "signal", sig.String())
+
+	srv.GracefulStop()
+	logger.Info("server stopped gracefully")
 }

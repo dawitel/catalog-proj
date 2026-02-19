@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	contractsmocks "github.com/dawitel/product-catalog-service/mocks/contracts"
 	clockmocks "github.com/dawitel/product-catalog-service/mocks/clock"
+	contractsmocks "github.com/dawitel/product-catalog-service/mocks/contracts"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

@@ -39,11 +39,11 @@ func (it *Interactor) Execute(ctx context.Context, req Request) (string, error) 
 	if id == "" {
 		id = uuid.New().String()
 	}
-	
+
 	now := it.clock.Now()
-	
+
 	basePrice := domain.NewMoney(req.BasePriceNumerator, req.BasePriceDenominator)
-	
+
 	product := domain.NewProduct(id, req.Name, req.Description, req.Category, basePrice, now)
 	if product == nil {
 		return "", errors.New("invalid product")
@@ -59,11 +59,11 @@ func (it *Interactor) Execute(ctx context.Context, req Request) (string, error) 
 			plan.Add(mut)
 		}
 	}
-	
+
 	if err := it.applier.Apply(ctx, plan); err != nil {
 		return "", err
 	}
-	
+
 	return product.ID(), nil
 }
 
@@ -77,11 +77,11 @@ func eventPayload(ev domain.DomainEvent) map[string]interface{} {
 		"product_id": e.ProductID, "name": e.Name, "description": e.Description, "category": e.Category,
 		"occurred_at": e.At,
 	}
-	
+
 	if e.BasePrice != nil {
 		m["base_price_numerator"] = e.BasePrice.Numerator()
 		m["base_price_denominator"] = e.BasePrice.Denominator()
 	}
-	
+
 	return m
 }

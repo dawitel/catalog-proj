@@ -25,7 +25,7 @@ func (h *Handler) ListProducts(ctx context.Context, req *productv1.ListProductsR
 	page := contracts.ListPage{PageSize: pageSize, Token: req.GetPageToken()}
 	result, err := h.List.Execute(ctx, filter, page)
 	if err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("ListProducts", err)
 	}
 	return listProductsReplyFromResult(result), nil
 }

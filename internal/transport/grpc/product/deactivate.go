@@ -15,7 +15,7 @@ func (h *Handler) DeactivateProduct(ctx context.Context, req *productv1.Deactiva
 		return nil, status.Error(codes.InvalidArgument, "product_id required")
 	}
 	if err := h.Deactivate.Execute(ctx, deactivate_product.Request{ProductID: req.GetProductId()}); err != nil {
-		return nil, ToGRPC(err)
+		return nil, LogRPCError("DeactivateProduct", err)
 	}
 	return &productv1.DeactivateProductReply{}, nil
 }
