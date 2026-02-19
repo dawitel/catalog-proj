@@ -16,6 +16,10 @@ func New(client *spanner.Client) *Committer {
 	return &Committer{exec: spannerdriver.NewExecutor(client)}
 }
 
+func NewWithExecutor(exec commitplan.Executor) *Committer {
+	return &Committer{exec: exec}
+}
+
 func (c *Committer) Apply(ctx context.Context, plan *commitplan.Plan) error {
 	return c.exec.Execute(ctx, plan)
 }

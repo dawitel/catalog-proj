@@ -28,3 +28,7 @@ func (p *Plan) Mutations() []*spanner.Mutation {
 type Executor interface {
 	Execute(ctx context.Context, plan *Plan) error
 }
+
+type Applier interface {
+	Apply(ctx context.Context, plan *Plan) error
+}
