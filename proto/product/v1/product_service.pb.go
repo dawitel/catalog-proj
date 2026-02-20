@@ -7,12 +7,11 @@
 package productv1
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -1131,7 +1130,7 @@ const file_proto_product_v1_product_service_proto_rawDesc = "" +
 	"\x0eRemoveDiscount\x12!.product.v1.RemoveDiscountRequest\x1a\x1f.product.v1.RemoveDiscountReply\x12H\n" +
 	"\n" +
 	"GetProduct\x12\x1d.product.v1.GetProductRequest\x1a\x1b.product.v1.GetProductReply\x12N\n" +
-	"\fListProducts\x12\x1f.product.v1.ListProductsRequest\x1a\x1d.product.v1.ListProductsReplyBGZEgithub.com/dawitel/catalog-proj/proto/product/v1;productv1b\x06proto3"
+	"\fListProducts\x12\x1f.product.v1.ListProductsRequest\x1a\x1d.product.v1.ListProductsReplyB<Z:github.com/dawitel/catalog-proj/proto/product/v1;productv1b\x06proto3"
 
 var (
 	file_proto_product_v1_product_service_proto_rawDescOnce sync.Once
