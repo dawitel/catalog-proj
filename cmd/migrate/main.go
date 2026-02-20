@@ -16,8 +16,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/dawitel/product-catalog-service/internal/pkg/config"
-	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
+	"github.com/dawitel/catalog-proj/internal/pkg/config"
+	"github.com/dawitel/catalog-proj/internal/pkg/logger"
 )
 
 const emulatorConfigID = "emulator-config"

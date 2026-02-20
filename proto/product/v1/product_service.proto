@@ -1,6 +1,6 @@
 syntax = "proto3";
 package product.v1;
-option go_package = "github.com/dawitel/product-catalog-service/proto/product/v1;productv1";
+option go_package = "github.com/dawitel/catalog-proj/proto/product/v1;productv1";
 
 service ProductService {
   rpc CreateProduct(CreateProductRequest) returns (CreateProductReply);

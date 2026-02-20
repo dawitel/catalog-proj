@@ -1,21 +1,21 @@
 with-expecter: true
 packages:
-  github.com/dawitel/product-catalog-service/internal/app/product/contracts:
+  github.com/dawitel/catalog-proj/internal/app/product/contracts:
     config:
       all: true
       dir: mocks/contracts
       outpkg: contracts
-  github.com/dawitel/product-catalog-service/internal/pkg/clock:
+  github.com/dawitel/catalog-proj/internal/pkg/clock:
     config:
       all: true
       dir: mocks/clock
       outpkg: clock
-  github.com/dawitel/product-catalog-service/internal/commitplan:
+  github.com/dawitel/catalog-proj/internal/commitplan:
     config:
       all: true
       dir: mocks/commitplan
       outpkg: commitplan
-  github.com/dawitel/product-catalog-service/internal/transport/grpc/product:
+  github.com/dawitel/catalog-proj/internal/transport/grpc/product:
     config:
       all: true
       dir: mocks/transport/grpc/product

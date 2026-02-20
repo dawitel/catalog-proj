@@ -1,4 +1,4 @@
-module github.com/dawitel/product-catalog-service
+module github.com/dawitel/catalog-proj
 
 go 1.25.7
 

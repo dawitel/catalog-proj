@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/dawitel/product-catalog-service/internal/pkg/config"
-	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
-	"github.com/dawitel/product-catalog-service/internal/services"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	"github.com/dawitel/catalog-proj/internal/pkg/config"
+	"github.com/dawitel/catalog-proj/internal/pkg/logger"
+	"github.com/dawitel/catalog-proj/internal/services"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 func main() {
