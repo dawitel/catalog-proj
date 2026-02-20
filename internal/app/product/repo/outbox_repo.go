@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/spanner"
-	"github.com/dawitel/product-catalog-service/internal/models/m_outbox"
+	"github.com/dawitel/catalog-proj/internal/models/m_outbox"
 )
 
 type OutboxRepo struct{}

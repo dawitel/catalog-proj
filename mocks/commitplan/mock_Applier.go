@@ -5,7 +5,7 @@ package commitplan
 import (
 	context "context"
 
-	commitplan "github.com/dawitel/product-catalog-service/internal/commitplan"
+	commitplan "github.com/dawitel/catalog-proj/internal/commitplan"
 
 	mock "github.com/stretchr/testify/mock"
 )

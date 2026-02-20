@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
-	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
-	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
-	update_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/update_product"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	"github.com/dawitel/catalog-proj/internal/app/product/queries/get_product"
+	"github.com/dawitel/catalog-proj/internal/app/product/queries/list_products"
+	create_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/create_product"
+	update_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/update_product"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 	"github.com/stretchr/testify/assert"
 )
 

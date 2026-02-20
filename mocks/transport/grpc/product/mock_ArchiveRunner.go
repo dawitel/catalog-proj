@@ -5,7 +5,7 @@ package product
 import (
 	context "context"
 
-	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
+	archive_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/archive_product"
 
 	mock "github.com/stretchr/testify/mock"
 )

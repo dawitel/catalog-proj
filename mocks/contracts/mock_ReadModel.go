@@ -5,7 +5,7 @@ package contracts
 import (
 	context "context"
 
-	contracts "github.com/dawitel/product-catalog-service/internal/app/product/contracts"
+	contracts "github.com/dawitel/catalog-proj/internal/app/product/contracts"
 	mock "github.com/stretchr/testify/mock"
 )
 

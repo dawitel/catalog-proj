@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
-	commitplanmocks "github.com/dawitel/product-catalog-service/mocks/commitplan"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
+	commitplanmocks "github.com/dawitel/catalog-proj/mocks/commitplan"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

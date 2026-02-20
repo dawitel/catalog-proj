@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
 )
 
 // EffectivePrice returns base price with discount applied at time at if discount is valid; otherwise returns base unchanged.

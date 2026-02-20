@@ -6,8 +6,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	activate_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/activate_product"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 func (h *Handler) ActivateProduct(ctx context.Context, req *productv1.ActivateProductRequest) (*productv1.ActivateProductReply, error) {

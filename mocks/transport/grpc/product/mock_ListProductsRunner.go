@@ -5,8 +5,8 @@ package product
 import (
 	context "context"
 
-	contracts "github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	list_products "github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
+	contracts "github.com/dawitel/catalog-proj/internal/app/product/contracts"
+	list_products "github.com/dawitel/catalog-proj/internal/app/product/queries/list_products"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -3,10 +3,10 @@ package get_product
 import (
 	"context"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain/services"
-	"github.com/dawitel/product-catalog-service/internal/pkg/clock"
+	"github.com/dawitel/catalog-proj/internal/app/product/contracts"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain/services"
+	"github.com/dawitel/catalog-proj/internal/pkg/clock"
 )
 
 type Query struct {

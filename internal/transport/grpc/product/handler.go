@@ -1,7 +1,7 @@
 package product
 
 import (
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 type Handler struct {

@@ -5,7 +5,7 @@ package product
 import (
 	context "context"
 
-	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
+	apply_discount "github.com/dawitel/catalog-proj/internal/app/product/usecases/apply_discount"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -6,8 +6,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	archive_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/archive_product"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 func (h *Handler) ArchiveProduct(ctx context.Context, req *productv1.ArchiveProductRequest) (*productv1.ArchiveProductReply, error) {

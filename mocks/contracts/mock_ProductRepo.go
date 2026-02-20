@@ -5,9 +5,9 @@ package contracts
 import (
 	context "context"
 
-	commitplan "github.com/dawitel/product-catalog-service/internal/commitplan"
+	commitplan "github.com/dawitel/catalog-proj/internal/commitplan"
 
-	domain "github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	domain "github.com/dawitel/catalog-proj/internal/app/product/domain"
 
 	mock "github.com/stretchr/testify/mock"
 

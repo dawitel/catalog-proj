@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"cloud.google.com/go/spanner"
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
 )
 
 type ProductRepo interface {

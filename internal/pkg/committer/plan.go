@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"cloud.google.com/go/spanner"
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
-	spannerdriver "github.com/dawitel/product-catalog-service/internal/commitplan/drivers/spanner"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
+	spannerdriver "github.com/dawitel/catalog-proj/internal/commitplan/drivers/spanner"
 )
 
 type Committer struct {

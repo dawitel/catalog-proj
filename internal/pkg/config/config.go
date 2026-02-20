@@ -6,7 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/dawitel/product-catalog-service/internal/pkg/logger"
+	"github.com/dawitel/catalog-proj/internal/pkg/logger"
 )
 
 type GlobalConfig struct {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

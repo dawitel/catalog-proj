@@ -6,8 +6,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	deactivate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/deactivate_product"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	deactivate_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/deactivate_product"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 func (h *Handler) DeactivateProduct(ctx context.Context, req *productv1.DeactivateProductRequest) (*productv1.DeactivateProductReply, error) {

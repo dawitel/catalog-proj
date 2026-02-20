@@ -11,9 +11,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
-	"github.com/dawitel/product-catalog-service/internal/models/m_product"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
+	"github.com/dawitel/catalog-proj/internal/models/m_product"
 )
 
 type ProductRepo struct {

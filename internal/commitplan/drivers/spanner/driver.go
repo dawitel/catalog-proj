@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/spanner"
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
 )
 
 type Executor struct {

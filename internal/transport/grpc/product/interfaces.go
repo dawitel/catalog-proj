@@ -3,16 +3,16 @@ package product
 import (
 	"context"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	"github.com/dawitel/product-catalog-service/internal/app/product/queries/get_product"
-	"github.com/dawitel/product-catalog-service/internal/app/product/queries/list_products"
-	activate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/activate_product"
-	apply_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/apply_discount"
-	archive_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/archive_product"
-	create_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/create_product"
-	deactivate_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/deactivate_product"
-	remove_discount "github.com/dawitel/product-catalog-service/internal/app/product/usecases/remove_discount"
-	update_product "github.com/dawitel/product-catalog-service/internal/app/product/usecases/update_product"
+	"github.com/dawitel/catalog-proj/internal/app/product/contracts"
+	"github.com/dawitel/catalog-proj/internal/app/product/queries/get_product"
+	"github.com/dawitel/catalog-proj/internal/app/product/queries/list_products"
+	activate_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/activate_product"
+	apply_discount "github.com/dawitel/catalog-proj/internal/app/product/usecases/apply_discount"
+	archive_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/archive_product"
+	create_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/create_product"
+	deactivate_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/deactivate_product"
+	remove_discount "github.com/dawitel/catalog-proj/internal/app/product/usecases/remove_discount"
+	update_product "github.com/dawitel/catalog-proj/internal/app/product/usecases/update_product"
 )
 
 type CreateRunner interface {

@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	"github.com/dawitel/product-catalog-service/internal/app/product/domain"
-	"github.com/dawitel/product-catalog-service/internal/commitplan"
-	"github.com/dawitel/product-catalog-service/internal/pkg/clock"
+	"github.com/dawitel/catalog-proj/internal/app/product/contracts"
+	"github.com/dawitel/catalog-proj/internal/app/product/domain"
+	"github.com/dawitel/catalog-proj/internal/commitplan"
+	"github.com/dawitel/catalog-proj/internal/pkg/clock"
 	"github.com/google/uuid"
 )
 

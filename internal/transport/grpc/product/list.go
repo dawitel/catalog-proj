@@ -3,8 +3,8 @@ package product
 import (
 	"context"
 
-	"github.com/dawitel/product-catalog-service/internal/app/product/contracts"
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	"github.com/dawitel/catalog-proj/internal/app/product/contracts"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

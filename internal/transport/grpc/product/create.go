@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	productv1 "github.com/dawitel/product-catalog-service/proto/product/v1"
+	productv1 "github.com/dawitel/catalog-proj/proto/product/v1"
 )
 
 func (h *Handler) CreateProduct(ctx context.Context, req *productv1.CreateProductRequest) (*productv1.CreateProductReply, error) {
